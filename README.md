@@ -2,7 +2,7 @@
 
 ## Introduction
 
-In this repo I tried to implement a function calling example with Ollama and Llama3.
+In this repo I tried to implement function calling examples with Ollama and Llama3.
 As I found in the process, Ollama does not support function calling natively.
 At least it did not in the version 0.1.41.
 I started with the [video by Sam Witteveen](https://youtu.be/Ss_GdU0KqE0),
@@ -27,21 +27,25 @@ I took the code from the [video by Sam Witteveen](https://youtu.be/Ss_GdU0KqE0) 
 
 This is what was shown in the video by Sam:
 
-```Mermaid
+[![](https://mermaid.ink/img/pako:eNpNjkFrwzAMhf-K0dktS5eSzYfCYNeyQ2_FF2Frmaktp54Na0P--9yEjL2T9PQ99EYw0RIo-KZrITb07rBPGDSLqreeOIvN4SA-vMeASsTkesfoxZBiGPKCLUexeYBzRInPwia7yMKg9yAhUArobH00PjIa8hcF0qDqaDFdNGieKoclx9ONDaicCkkog8W8llpNsi7HdFyKz_0lDMjnGP-QuoIa4QdUs2sl3EC97rbPT__UTBLuc6LZrta-a9qXru2mXyBbVxs?type=png)](https://mermaid.live/edit#pako:eNpNjkFrwzAMhf-K0dktS5eSzYfCYNeyQ2_FF2Frmaktp54Na0P--9yEjL2T9PQ99EYw0RIo-KZrITb07rBPGDSLqreeOIvN4SA-vMeASsTkesfoxZBiGPKCLUexeYBzRInPwia7yMKg9yAhUArobH00PjIa8hcF0qDqaDFdNGieKoclx9ONDaicCkkog8W8llpNsi7HdFyKz_0lDMjnGP-QuoIa4QdUs2sl3EC97rbPT__UTBLuc6LZrta-a9qXru2mXyBbVxs)
+
+<!-- ```Mermaid
 sequenceDiagram
     Agent ->> Ollama: original prompt
-    Ollama -->> Agent: function call
-```
+    Ollama -- >> Agent: function call
+``` -->
 
 This is what I can see in the [OpenAI documentation about function calling](https://platform.openai.com/docs/guides/function-calling):
 
-```Mermaid
+[![](https://mermaid.ink/img/pako:eNp1ULluAjEQ_RVraoOykAYXSEhpUkQp6CI3I3vYWFmPHR9KYLX_jtkVShqmmeu9N8cIJlgCBZm-K7GhF4d9Qq9ZNDv0xEWs9nvxHokPr0qE5HrHOIiYgo9lgS1NsboBZ4oSp8qmuMBZGByGR2p_qEQ5Nk-PBeepyPmHEkjwlDw62xYfbxQN5ZM8aVAttJi-NGieGg5rCcczG1AlVZJQo8VyPxLUCYfcqmRdCelt-cT8EAkR-SMEfye2FNQIv6C6zbOEM6jdZr19-mfdJOEyM7rpCkfDbYo?type=png)](https://mermaid.live/edit#pako:eNp1ULluAjEQ_RVraoOykAYXSEhpUkQp6CI3I3vYWFmPHR9KYLX_jtkVShqmmeu9N8cIJlgCBZm-K7GhF4d9Qq9ZNDv0xEWs9nvxHokPr0qE5HrHOIiYgo9lgS1NsboBZ4oSp8qmuMBZGByGR2p_qEQ5Nk-PBeepyPmHEkjwlDw62xYfbxQN5ZM8aVAttJi-NGieGg5rCcczG1AlVZJQo8VyPxLUCYfcqmRdCelt-cT8EAkR-SMEfye2FNQIv6C6zbOEM6jdZr19-mfdJOEyM7rpCkfDbYo)
+
+<!-- ```Mermaid
 sequenceDiagram
     Agent ->> OpenAI: original prompt
-    OpenAI -->> Agent: functions call
-    Agent ->> OpenAI: functions response
-    OpenAI -->> Agent: final answer
-```
+    OpenAI -- >> Agent: functions call
+    Agent - >> OpenAI: functions response
+    OpenAI -- >> Agent: final answer
+``` -->
 
 To make the Ollama example follow the OpenAI documentation, I made some changes in the code:
 
@@ -65,13 +69,15 @@ The final answer depends on the original prompt. For example, the prompt `what i
 
 The final conversation between Agent and Ollama.Llama3 is shown below:
 
-```Mermaid
+[![](https://mermaid.ink/img/pako:eNqdkk1Lw0AQhv_KOJdcYrFRCgatiIIIigdvGihjMiaL2d26H8Ya-t_dbZpSLyLuIWHfmX2fmWF6LHXFmKPld8-q5GtBtSFZKAjnsmbl4HA-h4e2JUmTu_g9zqHAG_HBQGAbbRyQsh2bCXQNORAWXMPQMYWfAaHgUaialtrwRYGD8Q87OIyEDSs6O63bRUlta8-f-0SR5CSHpGa3KL0xIWmxtU5SSMjUNoT7pNUlOaFVzN3xYoZXwkWx5NYKb5P1WMMvzUm2lmqGabz0BY7mBUZhZ19gGutluWRDzkchxrPZEIjkQdmyCwxwOHsxcxgJWQzDv4f5h3HeusRCR0YG4wqsV2r1wyaFTrgm0Pf6AP0K2Qwqrg2zhauh_IMCMQ2zMZJEFVamj_DQf8Ny23lF5i3WtA555J1-XKkSc2c8p-iXFblxvTB_pdYGlSvhtLkfdnCziikuST1pLceH4Yp5j5-YT7OTFFeYn2aT46O9M12n-LV5MV1_A_3R6pw?type=png)](https://mermaid.live/edit#pako:eNqdkk1Lw0AQhv_KOJdcYrFRCgatiIIIigdvGihjMiaL2d26H8Ya-t_dbZpSLyLuIWHfmX2fmWF6LHXFmKPld8-q5GtBtSFZKAjnsmbl4HA-h4e2JUmTu_g9zqHAG_HBQGAbbRyQsh2bCXQNORAWXMPQMYWfAaHgUaialtrwRYGD8Q87OIyEDSs6O63bRUlta8-f-0SR5CSHpGa3KL0xIWmxtU5SSMjUNoT7pNUlOaFVzN3xYoZXwkWx5NYKb5P1WMMvzUm2lmqGabz0BY7mBUZhZ19gGutluWRDzkchxrPZEIjkQdmyCwxwOHsxcxgJWQzDv4f5h3HeusRCR0YG4wqsV2r1wyaFTrgm0Pf6AP0K2Qwqrg2zhauh_IMCMQ2zMZJEFVamj_DQf8Ny23lF5i3WtA555J1-XKkSc2c8p-iXFblxvTB_pdYGlSvhtLkfdnCziikuST1pLceH4Yp5j5-YT7OTFFeYn2aT46O9M12n-LV5MV1_A_3R6pw)
+
+<!-- ```Mermaid
 sequenceDiagram
     Agent ->> Ollama.Llama3: "Give a short answer. what is the weather in Singapore?"
-    Ollama.Llama3 -->> Agent: "tool_calls=[{'name': 'get_current_weather', 'args': {'location': 'Singapore', 'unit': 'celsius'}"
+    Ollama.Llama3 -- >> Agent: "tool_calls=[{'name': 'get_current_weather', 'args': {'location': 'Singapore', 'unit': 'celsius'}"
     Agent ->> Ollama.Llama3: "message 1: "{"location": "Singapore", "temperature": "26", "unit": "celsius"}" <br> message 2: " Give a short answer. what is the weather in Singapore?""
-    Ollama.Llama3 -->> Agent: "It's warm and sunny in Singapore, with a temperature of 26 degrees Celsius!"
-```
+    Ollama.Llama3 -- >> Agent: "It's warm and sunny in Singapore, with a temperature of 26 degrees Celsius!"
+``` -->
 
 ## Try 2. Calculator tool call
 
