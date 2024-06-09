@@ -1,14 +1,15 @@
-from langchain_experimental.llms.ollama_functions import OllamaFunctions, ChatOllama
-from langchain_core.messages import HumanMessage, ToolMessage
 import json
 import re
+from langchain_experimental.llms.ollama_functions import OllamaFunctions, ChatOllama
+from langchain_core.messages import HumanMessage
+
 
 DEFAULT_SYSTEM_TEMPLATE = """You have access to the following tools:
 
 {tools}
 
 You should check if you need an additional information.
-If you do not need an additional information, respond conversationally.
+If you do not need an additional information, Respond conversationally.
 If you need an additional information select one of the above tools and respond with only a JSON object matching the following schema:
 
 {{
@@ -42,9 +43,18 @@ def calculate(expression):
         return "Error: Invalid expression"
 
 def run_conversation(question):
+    """
+    Runs a conversation with the given question.
 
+    Args:
+        question (str): The question to ask.
+
+    Returns:
+        Tuple[Any, List[HumanMessage]]: A tuple containing the response to the question 
+        and the list of messages in the conversation.
+    """
     chat_model = ChatOllama(
-        model="llama3:8b-instruct-q8_0", 
+        model="llama3:8b-instruct-q8_0",
         format="json",
         temperature=0.0
         )
@@ -105,19 +115,16 @@ def run_conversation(question):
 
     print("First AI response:")
     print(response)
-    # content=''
-    #  id='run-71f650a7-7557-4db2-b781-939c6db6bb99-0'
-    #  tool_calls=[{'name': 'get_current_weather', 'args': {'location': 'Singapore', 'unit': 'celsius'},
-    #  'id': 'call_cd09480568f349c5b1f2bdb689137198'}]
 
     # messages.append(response)
 
     available_functions = {
         "get_current_weather": get_current_weather,
         "calculator": calculate
-    }  # only one function in this example, but you can have multiple
+    } 
 
     need_a_second_call = False
+    content = [question]
     for tool_call in response.tool_calls:
         function_name = tool_call['name']
         function_to_call = available_functions[function_name]
@@ -133,62 +140,39 @@ def run_conversation(question):
         # It is better to have here a ToolMessage or a FunctionMessage
 
         # extend conversation with function response
-        # messages.insert(0, HumanMessage(content=function_response))
-        # messages.append(HumanMessage(content=f"'id': {tool_call['id']}, 'function_response': {function_response}"))
-        # messages.append(HumanMessage(function_response))
-        messages = [
-            HumanMessage( content=function_response + ". " + question )
-        ]        
+        content.insert(0, function_response)
         need_a_second_call = True
 
     # print("="*20)
     # print(messages)
     # print("="*20)
     if need_a_second_call:
+        # content.append("Give a short answer.")
+        messages = [
+            HumanMessage( content=". ".join(content) )
+        ]
         response2 = chat_model.invoke(messages)
+        # response2 = model.invoke(messages)
     else:
         response2 = response
 
     # print(response2)
 
     return response2, messages
-    # content=''
-    #  id='run-4cc432bd-30d5-45f9-b6b8-e91623e720c6-0'
-    #  tool_calls=[{'name': 'get_current_weather', 'args': {'location': 'Singapore'},
-    #  'id': 'call_e3f7c770d95142cca6bc48f1f4933a72'}]
-
-    # It doesn't work because of the langchain prompt to ollama like:
-    #  "You must always select one of the above tools and respond with only a JSON object matching the following schema"
-    # Every time ollama returns a function call.
 
 
 
+if __name__ == "__main__":
 
-# With this prompt, the model gives answer like:
-# content="According to my knowledge, Singapore's weather is typically hot and humid 
-# throughout the year. The temperature you provided, 26 degrees Celsius, is quite 
-# common for this tropical city-state. However, it's always a good idea to check
-#  current weather conditions before planning your activities."
+    response, messages = run_conversation("What is the result of 1,984,135 * 9,343,116?")
+    print(messages)
+    print(response)
 
-# response, messages = run_conversation('what is the weather in Singapore?')
+    response, messages = run_conversation("What is the result of 1,984,135 * 9,343,116 multiplied by 3? Give me a JSON response.")
+    print(messages)
+    print(response)
 
-
-# With this prompt, the model gives answer like:
-# content='' id='run-35841776-b47e-42e2-a781-c473a3a2b9e5-0' 
-# tool_calls=[{'name': 'get_current_weather', 'args': {'location': 'Singapore'},
-#  'id': 'call_6574337642184757a42378511917a83a'}]
-
-# response, messages = run_conversation('what is the weather in Singapore? Give a short answer.')
-
-
-# With this prompt, the model gives answer like:
-# content="It's warm and sunny in Singapore, with a temperature of 26 degrees Celsius!"
-
-# response, messages = run_conversation(" Give a short answer. what is the weather in Singapore?")
-
-
-response, messages = run_conversation("What is the result of 1,984,135 * 9,343,116?")
-
-
-print(messages)
-print(response)
+    response, messages = run_conversation("What is the result of 1,984,135 * 9,343,116 multiplied by 3? What is the result of 2**8? Give me a JSON response.")
+        #content='{\n"result": {\n"calculation": "1984135 * 9343116 * 3",\n"value": 55614010393980\n},\n"power_of_two": {\n"base": 2,\n"exponent": 8,\n"value": 256\n}\n}' response_metadata={'model': 'llama3:8b-instruct-q8_0', 'created_at': '2024-06-09T15:00:05.1080377Z', 'message': {'role': 'assistant', 'content': ''}, 'done_reason': 'stop', 'done': True, 'total_duration': 14563812700, 'load_duration': 1788800, 'prompt_eval_count': 72, 'prompt_eval_duration': 1071184000, 'eval_count': 59, 'eval_duration': 13489625000} id='run-1cff0b74-a1c0-431f-9b08-cfb060245d0e-0'
+    print(messages)
+    print(response)

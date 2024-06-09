@@ -83,9 +83,19 @@ sequenceDiagram
 
 The source code is available [here](ollama_llama3_function_calculator.py).
 
-```text
-TODO
-```
+Llama3:8b-instruct-q8_0 can extract a calculation request from the prompt pretty well. It generated a ocrrect mathematical expression even when a part was defined with math characters and another part with words. Unfortunately, Ollama did not request several function calls for two math expressions in the same prompt. I will try to change the system prompt to achieve this in future tries.
+
+The LLM did not want to see a function call results in the message history. To solve this problem I put the results in the top of the user prompt message.
+
+[![](https://mermaid.ink/img/pako:eNrFUttKxDAQ_ZVhXqoSl43ZFRtwRRAE8fKgIGhAYju7BnOpbSqupf9uuuuCCuKj8xCSmTlzzkymwyKUhBIbemnJF3Ri9KLWTnlIdrwgH2F3NoMra7XTo_PhFBIU3j7pCKaB-ERQU9PaCGEOnOUHE8bFFHYgZ2IiGOf74FLUVNZQCY9LEEdwal4JHIGGs-urywFfBd_QSOGa9xsb7A4CVlIkxBDsQ6GtbQ7vu8xrR5mELDmK1uoY6oxBputFk7xdRm9VKt2Y4IekLZ60fUpLypKw7XQVWf9nrzffetyQGb-AX2oOg5lO9_lkzMciF_nBeAT_NDCFnVJe4ZpSofwhLAV7hcjQUe20KdMqdENNhUmoowGgsNT180DVpzzdxnC99AXKWLfEsK1KHTdrg3KubZO8VJr0Gxfr3VqtGMNK-7sQ3AaYnig7fEPJ9yYMlyjzvZEYfzHeM3xfIXj_AbXvy44?type=png)](https://mermaid.live/edit#pako:eNrFUttKxDAQ_ZVhXqoSl43ZFRtwRRAE8fKgIGhAYju7BnOpbSqupf9uuuuCCuKj8xCSmTlzzkymwyKUhBIbemnJF3Ri9KLWTnlIdrwgH2F3NoMra7XTo_PhFBIU3j7pCKaB-ERQU9PaCGEOnOUHE8bFFHYgZ2IiGOf74FLUVNZQCY9LEEdwal4JHIGGs-urywFfBd_QSOGa9xsb7A4CVlIkxBDsQ6GtbQ7vu8xrR5mELDmK1uoY6oxBputFk7xdRm9VKt2Y4IekLZ60fUpLypKw7XQVWf9nrzffetyQGb-AX2oOg5lO9_lkzMciF_nBeAT_NDCFnVJe4ZpSofwhLAV7hcjQUe20KdMqdENNhUmoowGgsNT180DVpzzdxnC99AXKWLfEsK1KHTdrg3KubZO8VJr0Gxfr3VqtGMNK-7sQ3AaYnig7fEPJ9yYMlyjzvZEYfzHeM3xfIXj_AbXvy44)
+
+<!-- ```Mermaid
+sequenceDiagram
+    Agent ->> Ollama.Llama3: "What is the result of 1,984,135 * 9,343,116 multiplied by 3? Give me a JSON response."
+    Ollama.Llama3 -- >> Agent: tool_calls=[{'name': 'calculator', 'args': {'expression': '(1984135 * 9343116) * 3'}
+    Agent ->> Ollama.Llama3: "The result of calculating (1984135 * 9343116) * 3 is 55614010393980. What is the result of 1,984,135 * 9,343,116 multiplied by 3? Give me a JSON response."
+    Ollama.Llama3 -- >> Agent: "{\n"result": 55614010393980\n}"
+``` -->
 
 ## Try 3. Multiple functions call
 
@@ -117,9 +127,9 @@ The source code for this video is available [here](Examples/fc.py).
 
 [OpenAI documentation. Function calling](https://platform.openai.com/docs/guides/function-calling)
 
-You can find the source code from this documentation [here](Examples/openAI_multiple_function_calls.py).
+You can find the source code example from this documentation [here](Examples/openAI_multiple_function_calls.py).
 
-### Tools usage (function calling) for Anthropic
+### Tools usage (function calling) with Anthropic
 
 [Tool use (function calling)](https://docs.anthropic.com/en/docs/tool-use)
 
